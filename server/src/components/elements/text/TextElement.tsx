@@ -1,6 +1,6 @@
 import React from 'react';
-import { JsonText } from '../../types/design.types.js';
-import { TextNodeRenderer } from './text/TextNodeRenderer.js';
+import { JsonText } from '../../../types/design.types.js';
+import { TextNodeRenderer } from './TextNodeRenderer.js';
 
 interface TextElementProps {
   element: JsonText;

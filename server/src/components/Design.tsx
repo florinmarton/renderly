@@ -28,12 +28,13 @@ export const Design: React.FC<DesignProps> = ({ design }) => {
         backgroundColor,
         position: 'relative',
         overflow: 'hidden',
+        border: `1px solid ${properties.backgroundColor?.borderColor}`,
       }}
     >
       {banner.elements?.map((element: JsonSlideOrElement, index) => (
         isSlide(element)
-          ? <SlideElement key={`slide-${element.properties.id || index}`} element={element} />
-          : <DesignElement key={`element-${element.properties.id || index}`} element={element} />
+          ? <SlideElement key={`slide-${element.properties.bannersetElementId}`} element={element} />
+          : <DesignElement key={`element-${element.properties.bannersetElementId}`} element={element} />
       ))}
     </div>
   );
