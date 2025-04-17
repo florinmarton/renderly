@@ -1,5 +1,6 @@
 import React from 'react';
-import { JsonText, JsonTextAlignment } from '../../types/design.types.js';
+import { JsonText } from '../../types/design.types.js';
+import { TextNodeRenderer } from './text/TextNodeRenderer.js';
 
 interface TextElementProps {
   element: JsonText;
@@ -14,15 +15,18 @@ export const TextElement: React.FC<TextElementProps> = ({ element, style }) => {
       className="element text-element"
       style={{
         ...style,
-        color: '#000000',
         fontSize: props.fontSize || 16,
         textAlign: props.alignment,
-        lineHeight: 1.5,
+        lineHeight: props.lineHeight || 1.5,
         padding: 0,
         overflow: 'hidden',
       }}
     >
-      {props.text || ''}
+      {props.config?.nodes ? (
+        <TextNodeRenderer nodes={props.config.nodes} />
+      ) : (
+        props.text || ''
+      )}
     </div>
   );
 };
