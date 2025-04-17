@@ -16,7 +16,7 @@ export function getBaseElementStyles(props: JsonBaseElementProperties): React.CS
     opacity: props.opacity !== undefined ? props.opacity : 1,
     transform: props.rotation ? `rotate(${props.rotation}deg)` : undefined,
     zIndex: props.bannersetElementId || 0,
-    display: props.visible ? undefined : 'none',
+    display: props.visible === false ? 'none' : undefined,
   };
 
   return styles;

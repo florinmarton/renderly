@@ -1,7 +1,7 @@
 import React from 'react';
 import { JsonImage } from '../../types/design.types.js';
 
-const IMAGE_URL_PREFIX = 'https://d2gla4g2ia06u2.cloudfront.net/assets/media/';
+export const IMAGE_URL_PREFIX = 'https://d2gla4g2ia06u2.cloudfront.net/assets/media/';
 
 interface ImageElementProps {
   element: JsonImage;
