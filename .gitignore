@@ -137,3 +137,5 @@ dist
 
 # vite
 .vite
+
+.DS_Store

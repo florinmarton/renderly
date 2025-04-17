@@ -1,7 +1,8 @@
 import React from 'react';
 import { JsonImage } from '../../types/design.types.js';
 
-export const IMAGE_URL_PREFIX = 'https://d2gla4g2ia06u2.cloudfront.net/assets/media/';
+// Use environment variable with fallback
+export const IMAGE_URL_PREFIX = process.env.MEDIA_URL_PREFIX || 'https://d2gla4g2ia06u2.cloudfront.net/assets/media/';
 
 interface ImageElementProps {
   element: JsonImage;

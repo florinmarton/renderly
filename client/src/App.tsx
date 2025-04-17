@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import './App.css'
 
+const API_URL = (import.meta as any).env.VITE_API_URL || 'http://localhost:3000'
+
 function App() {
   const [hash, setHash] = useState('j2308jq')
   const [renderedHtml, setRenderedHtml] = useState('')
@@ -17,7 +19,7 @@ function App() {
     setError('')
 
     try {
-      const response = await fetch(`http://localhost:3000/api/render?hash=${hash}`)
+      const response = await fetch(`${API_URL}/api/render?hash=${hash}`)
 
       if (!response.ok) {
         throw new Error(`Error: ${response.status} ${response.statusText}`)
