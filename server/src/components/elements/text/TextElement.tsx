@@ -1,6 +1,7 @@
 import React from 'react';
 import { JsonText } from '../../../types/design.types.js';
 import { TextNodeRenderer } from './TextNodeRenderer.js';
+import { AnimationWrapper } from '../../animation/AnimationWrapper.js';
 
 interface TextElementProps {
   element: JsonText;
@@ -15,6 +16,8 @@ export const TextElement: React.FC<TextElementProps> = ({ element, style }) => {
       className="element text-element"
       style={{
         ...style,
+        width: style.width ? Number(style.width) * (props.scale || 1) : 'auto',
+        height: style.height ? Number(style.height) * (props.scale || 1) : 'auto',
         fontSize: props.fontSize || 16,
         textAlign: props.alignment,
         lineHeight: props.lineHeight || 1.5,
@@ -22,11 +25,13 @@ export const TextElement: React.FC<TextElementProps> = ({ element, style }) => {
         overflow: 'hidden',
       }}
     >
-      {props.config?.nodes ? (
-        <TextNodeRenderer nodes={props.config.nodes} />
-      ) : (
-        props.text || ''
-      )}
-    </div>
+      <AnimationWrapper props={props}>
+        {props.config?.nodes ? (
+          <TextNodeRenderer nodes={props.config.nodes} />
+        ) : (
+          props.text || ''
+        )}
+      </AnimationWrapper>
+    </div >
   );
 };

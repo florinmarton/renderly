@@ -1,0 +1,55 @@
+/* Base animation classes */
+.animation-alpha, .animation-slide {
+  animation-fill-mode: both;
+}
+
+/* Fade animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+/* Slide animations */
+@keyframes slideIn {
+  from {
+    transform: translateY(50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOut {
+  from {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(50px);
+    opacity: 0;
+  }
+}
+
+/* Apply animations based on phase */
+.buildIn.animation-alpha {
+  animation-name: fadeIn;
+}
+
+.buildOut.animation-alpha {
+  animation-name: fadeOut;
+}
+
+.buildIn.animation-slide {
+  animation-name: slideIn;
+}
+
+.buildOut.animation-slide {
+  animation-name: slideOut;
+}
