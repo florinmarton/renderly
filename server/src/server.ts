@@ -1,23 +1,34 @@
 import express from 'express';
 import cors from 'cors';
+import dotenv from 'dotenv';
 import { fetchDesignJson } from './services/jsonFetcher.js';
 import { renderDesignToHtml } from './services/ssrRenderer.js';
 import { setInCache, getFromCache } from './services/cacheService.js';
 import { DesignJsonWithBanner } from './types/design.types.js';
-import dotenv from 'dotenv';
+import { createCacheMiddleware } from './middleware/cache.js';
+
 
 // Load environment variables
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const CACHE_DURATION = 60;
+const CACHE_STALE_WHILE_REVALIDATE = 30;
+
+
+// Configure cache durations
+const cacheMiddleware = createCacheMiddleware({
+  maxAge: CACHE_DURATION,
+  staleWhileRevalidate: CACHE_STALE_WHILE_REVALIDATE,
+});
 
 // Middleware
 app.use(cors());
 app.use(express.json());
 
 // Routes
-app.get('/api/render', async (req, res) => {
+app.get('/api/render', cacheMiddleware, async (req, res) => {
   try {
     const hash = req.query.hash as string;
 

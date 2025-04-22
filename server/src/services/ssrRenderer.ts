@@ -1,11 +1,11 @@
 import React from 'react';
-import { renderToString } from 'react-dom/server';
+import { renderToStaticMarkup } from 'react-dom/server';
 import { Design } from '../components/Design.js';
 import { DesignJsonWithBanner } from '../types/design.types.js';
 
 export function renderDesignToHtml(designJson: DesignJsonWithBanner): string {
   try {
-    const reactHtml = renderToString(
+    const reactHtml = renderToStaticMarkup(
       React.createElement(Design, { design: designJson })
     );
 
