@@ -8,6 +8,12 @@
     "build": "tsc",
     "start": "node dist/index.js",
     "dev": "NODE_OPTIONS='--loader ts-node/esm' node src/index.ts",
+    "dev:redis": "USE_REDIS=true NODE_OPTIONS='--loader ts-node/esm' node src/index.ts",
+    "redis:start": "docker run -d -p 6379:6379 --name renderly-redis redis:alpine",
+    "redis:stop": "docker stop renderly-redis && docker rm renderly-redis",
+    "redis:restart": "docker start redis",
+    "redis:remove": "docker rm redis",
+    "redis:cli": "docker exec -it redis redis-cli",
     "test": "jest",
     "test:watch": "jest --watch"
   },
@@ -17,7 +23,8 @@
     "express": "^4.18.2",
     "node-cache": "^5.1.2",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "redis": "^4.6.13"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^5.16.5",

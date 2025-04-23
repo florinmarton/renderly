@@ -30,10 +30,19 @@ A server-side rendering solution for transforming Creatopy JSON designs into sta
 - Integration with caching layer
 
 **Caching Strategy**
-- Memory cache for frequently accessed designs
-- Cache invalidation based on TTL
-- Fallback to direct fetching on cache miss
+The server implements a robust multi-layer caching strategy:
 
+### Server-Side Caching
+- **Primary**: Redis-based distributed cache for multi-instance deployments
+- **Fallback**: Automatic in-memory cache if Redis is unavailable
+- **TTL**: Configurable cache duration with automatic invalidation
+
+### Browser-Side Caching
+- HTTP Cache-Control headers with stale-while-revalidate
+- Configurable fresh and stale durations
+- Production-only caching for development convenience
+
+[Detailed caching documentation](server/README.md#caching-strategy)
 **Type Safety**
 - Comprehensive TypeScript types for JSON structure
 - Type guards for different element types
@@ -85,20 +94,22 @@ A server-side rendering solution for transforming Creatopy JSON designs into sta
   - **Challenge**: SSR rendering is usually computationally expensive, especially for complex designs
   - **Solution**:
     - Used renderToStaticMarkup from react-dom/server to render the design to static HTML, instead of renderToString, since we don't need to deal with hydration on the client, in the current use case
-    - Implemented in-memory caching for rendered HTML
-    - Cache headers are set to cache the HTML in the user's browser (production only)
+    - Implemented Redis-based distributed cache for multi-instance deployments
+    - Implemented in-memory fallback cache if Redis is unavailable
+    - Browser caching through HTTP Cache-Control headers, for production only
   - **Result**: Subsequent requests for the same design are served instantly from cache
 
 8. **Scalability**
    - **Challenge**: Ensuring the system can handle increased load
    - **Solution**:
-     - Separated concerns into standalone services:
-       1. JSON Fetch
-       2. SSR rendering
-       3. Caching
-     - Deployed on Render.com which provides:
-       - Automatic horizontal scaling
-       - Load balancing across instances
+    - Separated concerns into standalone services:
+      1. JSON Fetch
+      2. SSR rendering
+      3. Caching
+    - Redis is deployed as a separate container, so the app can scale independently of the caching layer
+    - Deployed on Render.com which provides:
+      - Automatic horizontal scaling
+      - Load balancing across instances
 
 ### Future Improvements
 With more time, I would add:
@@ -115,15 +126,13 @@ With more time, I would add:
 - Animation presets
 
 3. **Performance Optimizations**
-  - Redis caching layer, so the app can scale independently of the caching layer
   - CDN integration to cache HTML (e.g. Cloudflare)
   - Smart cache invalidation based on design updates
-  - Eager rendering for popular designs
+  - Pre-rendering mechanisms for popular designs
   - Dynamic caching times for popular designs, based on metrics (how hot the design is)
 
 4. **Infrastructure Improvements**
   - Multi-region deployment (e.g. Fly.io)
-  - Load balancing
   - Caching layer (Redis)
 
 5. **Monitoring and Reliability**

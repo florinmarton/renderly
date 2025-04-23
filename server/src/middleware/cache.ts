@@ -1,17 +1,12 @@
 import { Request, Response, NextFunction } from 'express';
 
 interface CacheOptions {
-  maxAge?: number;        // seconds to consider fresh
-  staleWhileRevalidate?: number;  // additional seconds to serve stale
+  maxAge: number;
+  staleWhileRevalidate: number;
 }
 
-export function createCacheMiddleware(options: CacheOptions = {}) {
-
-  // By default, cache for 60 seconds and allow serving stale content for up to 30 seconds while fetching new version
-  const {
-    maxAge = 60,
-    staleWhileRevalidate = 30
-  } = options;
+export const createCacheMiddleware = (options: CacheOptions) => {
+  const { maxAge, staleWhileRevalidate } = options;
 
   return (req: Request, res: Response, next: NextFunction) => {
     // Disable caching in non-production environments
@@ -20,10 +15,10 @@ export function createCacheMiddleware(options: CacheOptions = {}) {
       return next();
     }
 
-    res.set(
+    res.setHeader(
       'Cache-Control',
       `public, max-age=${maxAge}, stale-while-revalidate=${staleWhileRevalidate}`
     );
     next();
   };
-}
+};

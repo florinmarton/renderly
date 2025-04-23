@@ -3,19 +3,16 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import { fetchDesignJson } from './services/jsonFetcher.js';
 import { renderDesignToHtml } from './services/ssrRenderer.js';
-import { setInCache, getFromCache } from './services/cacheService.js';
+import { setInCache, getFromCache, closeCacheConnections } from './services/cacheService.js';
 import { DesignJsonWithBanner } from './types/design.types.js';
 import { createCacheMiddleware } from './middleware/cache.js';
 
-
-// Load environment variables
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const CACHE_DURATION = 60;
-const CACHE_STALE_WHILE_REVALIDATE = 30;
-
+const CACHE_DURATION = parseInt(process.env.CACHE_DURATION || '60', 10);
+const CACHE_STALE_WHILE_REVALIDATE = parseInt(process.env.CACHE_STALE_WHILE_REVALIDATE || '30', 10);
 
 // Configure cache durations
 const cacheMiddleware = createCacheMiddleware({
@@ -37,7 +34,7 @@ app.get('/api/render', cacheMiddleware, async (req, res) => {
     }
 
     const cacheKey = `design:${hash}`;
-    let html = getFromCache(cacheKey);
+    let html = await getFromCache(cacheKey);
 
     if (!html) {
       console.log(`Cache miss for ${hash}, fetching and rendering...`);
@@ -61,11 +58,25 @@ app.get('/health', (req, res) => {
   res.status(200).json({ status: 'ok' });
 });
 
-// Start server
 export const startServer = () => {
-  return app.listen(PORT, () => {
+  const server = app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
   });
+
+  // Handle graceful shutdown
+  const shutdown = async () => {
+    console.log('Shutting down server...');
+    server.close();
+    await closeCacheConnections();
+    console.log('Server shutdown complete');
+    process.exit(0);
+  };
+
+  // Listen for termination signals
+  process.on('SIGTERM', shutdown);
+  process.on('SIGINT', shutdown);
+
+  return server;
 };
 
 export default app;

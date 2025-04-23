@@ -53,6 +53,35 @@ CACHE_TTL=3600
 MEDIA_URL_PREFIX=https://d2gla4g2ia06u2.cloudfront.net/assets/media/
 ```
 
+### Setting up Redis
+
+1. Install Docker Desktop from [https://www.docker.com/products/docker-desktop/](https://www.docker.com/products/docker-desktop/) or using homebrew (on macos)
+
+2. Start Docker Desktop
+
+3. Manage Redis using npm scripts:
+```bash
+# Start Redis container
+npm run redis:start
+
+# Stop Redis container and remove it
+npm run redis:stop
+
+# Restart Redis container
+npm run redis:restart
+
+# Remove Redis container
+npm run redis:remove
+
+# Access Redis CLI
+npm run redis:cli
+
+# Start server with Redis enabled
+npm run dev:redis
+```
+
+Note: Make sure Docker Desktop is running before executing these commands.
+
 ## Usage Instructions
 
 ### Starting the Server
@@ -100,10 +129,11 @@ server/
 │   ├── components/   # React components
 │   │   ├── elements/ # Design element components
 │   │   └── ...
-│   ├── types/        # TypeScript type definitions
-│   ├── utils/        # Utility functions
+│   ├── middleware/   # Middleware functions
 │   ├── services/     # Business logic services
 │   ├── styles/       # CSS styles
+│   ├── types/        # TypeScript type definitions
+│   ├── utils/        # Utility functions
 │   ├── server.ts     # Express server setup
 │   └── index.ts      # Application entry point
 └── ...
@@ -148,4 +178,41 @@ Logs are output to the console and can be redirected to a file:
 
 ```bash
 npm start > renderly.log 2>&1
+```
+
+## Caching Strategy
+
+Renderly implements a multi-layer caching strategy:
+
+### Primary Cache (Redis)
+- Distributed cache shared between server instances
+- Stores rendered HTML for designs
+- Configurable TTL via `CACHE_TTL` environment variable
+- Automatically handles cache invalidation
+- Enables consistent caching across multiple server instances
+
+### Fallback Cache (In-Memory)
+- Automatically activated if Redis connection fails
+- Local to each server instance
+- Uses same TTL as Redis configuration
+- Provides resilience against Redis outages
+
+### Browser Cache
+- Uses HTTP Cache-Control headers
+- Implements stale-while-revalidate strategy
+- Only enabled in production environment (`NODE_ENV=production`)
+- Configurable via environment variables:
+  - `CACHE_DURATION`: Time in seconds content is considered fresh
+  - `CACHE_STALE_WHILE_REVALIDATE`: Additional time content can be served while revalidating
+
+### Cache Configuration
+```
+# Redis settings
+USE_REDIS=true
+REDIS_URL=redis://localhost:6379
+CACHE_TTL=3600           # Cache TTL in seconds
+
+# Browser Cache settings (in seconds)
+CACHE_DURATION=60        # 1 minute fresh
+CACHE_STALE_WHILE_REVALIDATE=30  # 30 seconds stale
 ```
