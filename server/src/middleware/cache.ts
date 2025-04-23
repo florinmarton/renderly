@@ -10,8 +10,7 @@ export const createCacheMiddleware = (options: CacheOptions) => {
 
   return (req: Request, res: Response, next: NextFunction) => {
     // Disable caching in non-production environments
-    console.log('NODE_ENV', process.env.NODE_ENV);
-    if (process.env.NODE_ENV !== 'production') {
+    if (process.env.ENABLE_BROWSER_CACHE !== 'true') {
       res.set('Cache-Control', 'no-store');
       return next();
     }
